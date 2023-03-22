@@ -1,25 +1,42 @@
 package com.springboot.selenium.demospringbootseleniumstarter.tests;
 
-import com.springboot.selenium.demospringbootseleniumstarter.library.WebDriverLibrary;
-import org.junit.jupiter.api.Test;
-import org.openqa.selenium.WebDriver;
+import com.springboot.selenium.demospringbootseleniumstarter.pages.HomePage;
+import com.springboot.selenium.demospringbootseleniumstarter.pages.LoginPage;
+import com.springboot.selenium.demospringbootseleniumstarter.pages.SuccessPage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
+import org.testng.annotations.Test;
 
 @SpringBootTest
-public class DemoSpringbootSeleniumStarterApplicationTests {
+public class DemoSpringbootSeleniumStarterApplicationTests extends AbstractTestNGSpringContextTests {
 
 	@Autowired
-	public WebDriver webDriver;
+	public HomePage homePage;
 
-	@Value("${api.url}")
-	public String appUrl;
+	@Autowired
+	public LoginPage loginPage;
+
+	@Autowired
+	public SuccessPage successPage;
 
 	@Test
-	public void testBrowserLaunch() {
-		webDriver.get(appUrl);
-		webDriver.quit();
+	public void testLoginSuccess() {
+		homePage.launchInternetHerokuApp();
+		homePage.clickHyperlink("Form Authentication");
+		loginPage.enterUserNameAndPassword();
+		loginPage.clickLoginButton();
+		successPage.verifySuccessMessage();
+	}
+
+	@Test
+	void testLoginFailure() {
+		homePage.launchInternetHerokuApp();
+		homePage.clickHyperlink("Form Authentication");
+		loginPage.enterUserNameAndPasswordInvalid();
+		loginPage.clickLoginButton();
+		loginPage.verifyLoginFailureMessage();
 	}
 
 }
